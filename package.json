@@ -16,12 +16,14 @@
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
     "@octokit/rest": "^21.1.0",
-    "allure-deployer-shared": "1.2.5"
+    "allure-deployer-shared": "1.2.5",
+    "tar": "^7.4.3"
   },
   "devDependencies": {
+    "@types/tar": "^6.1.13",
+    "@types/unzipper": "^0.10.10",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
-    "@types/unzipper": "^0.10.10",
     "eslint": "^9.16.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.31.0",

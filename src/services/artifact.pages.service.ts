@@ -3,6 +3,9 @@ import {Octokit} from "@octokit/rest";
 import {DefaultArtifactClient} from "@actions/artifact";
 import {getAbsoluteFilePaths} from "../utilities/util.js";
 import github from "@actions/github";
+import * as tar from "tar";
+import * as os from "node:os";
+import path from "node:path";
 
 export interface ArtifactPagesConfig {
     owner: string;
@@ -48,9 +51,45 @@ export class ArtifactPagesService implements PagesInterface{
     }
 
     async setup(): Promise<string> {
+        const tarPath = path.join(os.tmpdir(), 'artifact.tar')
         const files = getAbsoluteFilePaths(this.reportDir)
-        const response = await this.artifactClient.uploadArtifact('allure-reports', files, this.reportDir, {retentionDays: 1})
+        await this.createArchive(files, this.reportDir, tarPath)
+        const response = await this.artifactClient.uploadArtifact('github-pages', [tarPath], path.dirname(tarPath), {retentionDays: 1})
         this.artifactId = response.id!
         return ''
+    }
+
+    // Function to create a tar archive
+    async createArchive(files: string[], filesSource: string, outputPath: string): Promise<void> {
+        console.log('::group::Archive artifact');
+
+        if (files.length === 0) {
+            console.warn('No files to archive.');
+            return;
+        }
+
+        // Create the tar archive
+        await new Promise((resolve, reject) => {
+            tar.create(
+                {
+                    // file: outputPath,
+                    gzip: false,
+                    cwd: filesSource,
+                    sync: false, file: outputPath
+                },
+                files,
+                (e)=> {
+                    if(e){
+                        reject(e);
+                    } else {
+                        resolve(true);
+                    }
+                }
+            );
+        })
+
+
+        console.log(`Archive created at: ${outputPath}`);
+        console.log('::endgroup::');
     }
 }
