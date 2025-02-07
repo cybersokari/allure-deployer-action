@@ -1,4 +1,4 @@
-import {GithubPagesInterface} from "../interfaces/github-pages.interface.js";
+import {PagesInterface} from "../interfaces/pages.interface";
 import {Octokit} from "@octokit/rest";
 import pLimit from "p-limit";
 import fs from "fs";
@@ -23,7 +23,7 @@ export type GitHubConfig = {
     token: string
 }
 
-export class GithubPagesService implements GithubPagesInterface {
+export class BranchPagesService implements PagesInterface {
     private octokit: Octokit;
     public readonly branch: string;
     public readonly subFolder: string;
@@ -167,7 +167,7 @@ export class GithubPagesService implements GithubPagesInterface {
         console.log("Deployment to GitHub Pages complete with a single commit.");
     }
 
-    async setupBranch(): Promise<void> {
+    async setup(): Promise<string> {
         const owner = this.owner;
         const repo = this.repo;
 
@@ -201,6 +201,7 @@ export class GithubPagesService implements GithubPagesInterface {
                 throw error;
             }
         }
+        return `https://${this.owner}.github.io/${this.repo}/${this.subFolder}`
     }
 
     private getFilesFromDir(dir: string): string[] {

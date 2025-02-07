@@ -6,7 +6,6 @@ export class GithubHost {
         await this.client.deployPages();
     }
     async init() {
-        await this.client.setupBranch();
-        return `https://${this.client.owner}.github.io/${this.client.repo}/${this.client.subFolder}`;
+        return await this.client.setup();
     }
 }

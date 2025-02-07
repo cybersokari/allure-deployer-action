@@ -2,7 +2,7 @@ import { GithubInterface} from "../interfaces/github.interface.js";
 import github from "@actions/github";
 import core from "@actions/core";
 
-export class GitHubService implements GithubInterface {
+export class NotifierService implements GithubInterface {
 
     async updateOutput({name, value}: { name: string, value: string }): Promise<void> {
         try {

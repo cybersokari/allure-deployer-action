@@ -3,7 +3,7 @@ import pLimit from "p-limit";
 import fs from "fs";
 import path from "node:path";
 import { DEFAULT_RETRY_CONFIG, withRetry } from "../utilities/util.js";
-export class GithubPagesService {
+export class BranchPagesService {
     constructor({ branch, filesDir, retryConfig = DEFAULT_RETRY_CONFIG, token, repo, runId, subFolder, owner }) {
         this.octokit = new Octokit({ auth: token });
         this.branch = branch;
@@ -109,7 +109,7 @@ export class GithubPagesService {
         }), this.retryConfig);
         console.log("Deployment to GitHub Pages complete with a single commit.");
     }
-    async setupBranch() {
+    async setup() {
         const owner = this.owner;
         const repo = this.repo;
         try {
@@ -134,6 +134,7 @@ export class GithubPagesService {
                 throw error;
             }
         }
+        return `https://${this.owner}.github.io/${this.repo}/${this.subFolder}`;
     }
     getFilesFromDir(dir) {
         const files = [];

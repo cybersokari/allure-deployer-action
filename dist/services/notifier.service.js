@@ -1,6 +1,6 @@
 import github from "@actions/github";
 import core from "@actions/core";
-export class GitHubService {
+export class NotifierService {
     async updateOutput({ name, value }) {
         try {
             core.setOutput(name, value);

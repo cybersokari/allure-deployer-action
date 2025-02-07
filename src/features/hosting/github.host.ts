@@ -1,16 +1,15 @@
-import {GithubPagesInterface} from "../../interfaces/github-pages.interface.js";
+import {PagesInterface} from "../../interfaces/pages.interface";
 import {HostingProvider} from "allure-deployer-shared";
 
 export class GithubHost implements HostingProvider{
-    constructor(readonly client: GithubPagesInterface) {
+    constructor(readonly client: PagesInterface) {
     }
     async deploy(): Promise<any> {
         await this.client.deployPages();
     }
 
     async init(): Promise<string> {
-        await this.client.setupBranch()
-        return `https://${this.client.owner}.github.io/${this.client.repo}/${this.client.subFolder}`
+        return await this.client.setup()
     }
 
 }

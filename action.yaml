@@ -52,8 +52,7 @@ inputs:
     description: "Generated GITHUB_TOKEN or Personal Access Token for deploying report to GitHub pages and pr_comment"
     default: '${{ github.token }}'
   github_pages_branch:
-    description: "Target branch for Deploying to GitHub Pages"
-    default: 'gh-pages'
+    description: "Target branch for Deploying to GitHub Pages. Leave empty if you prefer to deploy via Artifacts"
   github_subfolder:
     description: "Sub directory to write the test reports files in Git"
     required: false

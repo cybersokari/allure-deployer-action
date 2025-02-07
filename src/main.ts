@@ -11,7 +11,7 @@ import {
     getReportStats,
     getRuntimeDirectory,
     GoogleStorage,
-    GoogleStorageService,
+    GoogleStorageService, HostingProvider,
     IStorage,
     NotificationData,
     Notifier,
@@ -22,9 +22,9 @@ import {
     validateResultsPaths,
 } from "allure-deployer-shared";
 import {Storage as GCPStorage} from "@google-cloud/storage";
-import {GitHubService} from "./services/github.service.js";
+import {NotifierService} from "./services/notifier.service";
 import {GitHubNotifier} from "./features/messaging/github-notifier.js";
-import {GitHubConfig, GithubPagesService} from "./services/github-pages.service.js";
+import {GitHubConfig, BranchPagesService} from "./services/branch.pages.service";
 import {GithubHost} from "./features/hosting/github.host.js";
 import github from "@actions/github";
 import core from "@actions/core";
@@ -32,6 +32,7 @@ import {setGoogleCredentialsEnv, validateSlackConfig} from "./utilities/util.js"
 import {GitHubArgInterface, Target} from "./interfaces/args.interface.js";
 import {ArtifactService} from "./services/artifact.service.js";
 import {GithubStorage} from "./features/github-storage.js";
+import {ArtifactPagesConfig, ArtifactPagesService} from "./services/artifact.pages.service";
 
 function getTarget(): Target {
     const target = core.getInput("target", {required: true}).toLowerCase();
@@ -97,7 +98,7 @@ export function main() {
                 return;
             }
             args.githubToken = token;
-            args.host = getGitHubHost({
+            args.host = await getGitHubHost({
                 token,
                 REPORTS_DIR,
             });
@@ -128,23 +129,44 @@ function getFirebaseHost({firebaseProjectId, REPORTS_DIR}: {
     return new FirebaseHost(new FirebaseService(firebaseProjectId, REPORTS_DIR));
 }
 
-function getGitHubHost({
-                           token,
-                           REPORTS_DIR,
-                       }: {
+async function getGitHubHost({
+                                 token,
+                                 REPORTS_DIR,
+                             }: {
     token: string;
     REPORTS_DIR: string;
-}): GithubHost {
-    const config: GitHubConfig = {
-        runId: github.context.runId.toString(),
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        subFolder: path.join(core.getInput('github_subfolder'), `${github.context.runNumber}`),
-        branch: core.getInput("github_pages_branch"),
-        filesDir: REPORTS_DIR,
-        token: token
+}): Promise<GithubHost> {
+    const branch = getInputOrUndefined('github_pages_branch');
+    if (branch) {
+        const config: GitHubConfig = {
+            runId: github.context.runId.toString(),
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            subFolder: path.join(core.getInput('github_subfolder'), `${github.context.runNumber}`),
+            branch,
+            filesDir: REPORTS_DIR,
+            token
+        }
+        return new GithubHost(new BranchPagesService(config));
+
+    } else {
+        try {
+            const idToken = await core.getIDToken()
+            const config: ArtifactPagesConfig = {
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                reportDir: REPORTS_DIR,
+                token,
+                idToken
+            }
+            return new GithubHost(new ArtifactPagesService(config));
+        } catch (error) {
+            console.log(error)
+            core.setFailed(`Ensure GITHUB_TOKEN has permission "id-token: write".`)
+            throw error;
+        }
     }
-    return new GithubHost(new GithubPagesService(config));
+
 }
 
 async function initializeStorage(args: GitHubArgInterface): Promise<IStorage | undefined> {
@@ -194,8 +216,17 @@ async function stageDeployment(args: ArgsInterface, storage?: IStorage) {
         to: args.RESULTS_STAGING_PATH,
         concurrency: args.fileProcessingConcurrency,
     });
+    const initHost: () => Promise<undefined | string> = async () => {
+        const host: HostingProvider | undefined = args.host
+        if(!host) return undefined;
+        const url = await host.init()
+        if (!url) { // remove empty string
+            return undefined;
+        }
+        return url
+    }
     const result = await Promise.all([
-        args.host?.init(args.clean),
+        initHost(),
         copyResultsFiles,
         args.downloadRequired ? storage?.stageFilesFromStorage() : undefined,
     ]);
@@ -270,7 +301,7 @@ async function sendNotifications(
     const token = args.githubToken
     const prNumber = github.context.payload.pull_request?.number;
     const prComment = core.getBooleanInput("pr_comment");
-    const githubNotifierClient = new GitHubService()
+    const githubNotifierClient = new NotifierService()
     notifiers.push(new GitHubNotifier({client: githubNotifierClient, token, prNumber, prComment}));
     const notificationData: NotificationData = {resultStatus, reportUrl, environment}
     await new NotifyHandler(notifiers).sendNotifications(notificationData);
