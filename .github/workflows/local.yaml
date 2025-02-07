@@ -79,7 +79,7 @@ jobs:
         uses: ./
         with:
           target: 'github'
-          github_pages_branch: 'gh-pages'
+          github_pages_branch: ${{ github.event.inputs.gh-pages-branch }}
           allure_results_path: 'allure-results'
           show_history: ${{github.event.inputs.show-history}}
           retries: ${{github.event.inputs.retries}}
