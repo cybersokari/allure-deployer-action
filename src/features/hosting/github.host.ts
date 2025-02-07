@@ -2,7 +2,8 @@ import {PagesInterface} from "../../interfaces/pages.interface.js";
 import {HostingProvider} from "allure-deployer-shared";
 
 export class GithubHost implements HostingProvider{
-    constructor(readonly client: PagesInterface) {
+    constructor(public readonly client: PagesInterface) {
+
     }
     async deploy(): Promise<any> {
         await this.client.deployPages();

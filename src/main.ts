@@ -64,6 +64,7 @@ export function main() {
         const reportOutputPath = getInputOrUndefined('output');
         const REPORTS_DIR = reportOutputPath ? reportOutputPath : path.join(runtimeDir, "allure-report");
         const storageRequired = showHistory || retries > 0
+        const branch = getInputOrUndefined('github_pages_branch')
         const args: GitHubArgInterface = {
             downloadRequired: storageRequired,
             uploadRequired: storageRequired,
@@ -77,6 +78,7 @@ export function main() {
             showHistory,
             storageRequired,
             target,
+            branch,
             reportLanguage: getInputOrUndefined('language')
         };
 
@@ -101,6 +103,7 @@ export function main() {
             args.host = await getGitHubHost({
                 token,
                 REPORTS_DIR,
+                branch
             });
         }
         await executeDeployment(args);
@@ -132,11 +135,12 @@ function getFirebaseHost({firebaseProjectId, REPORTS_DIR}: {
 async function getGitHubHost({
                                  token,
                                  REPORTS_DIR,
+                                 branch
                              }: {
     token: string;
     REPORTS_DIR: string;
+    branch?: string;
 }): Promise<GithubHost> {
-    const branch = getInputOrUndefined('github_pages_branch');
     if (branch) {
         const config: GitHubConfig = {
             runId: github.context.runId.toString(),
@@ -218,7 +222,14 @@ async function stageDeployment(args: ArgsInterface, storage?: IStorage) {
     });
     const initHost: () => Promise<undefined | string> = async () => {
         const host: HostingProvider | undefined = args.host
-        if(!host) return undefined;
+
+        if (!host) {
+            return undefined
+        }
+        // Artifact pages deployments do not require init during staging
+        if (host instanceof GithubHost && host.client instanceof ArtifactPagesService) {
+            return undefined
+        }
         const url = await host.init()
         if (!url) { // remove empty string
             return undefined;
@@ -274,9 +285,20 @@ async function finalizeDeployment({
     storage?: IStorage;
 }) {
     console.log("Finalizing deployment...");
+    const deploySite = async () => {
+        const host = args.host;
+        if (!host) {
+            return undefined
+        }
+        // Artifact pages require init during deployment
+        if (host instanceof GithubHost && host.client instanceof ArtifactPagesService) {
+            await host.init()
+        }
+        return await host.deploy()
+    }
     const result = await Promise.all([
         getReportStats(args.REPORTS_DIR),
-        args.host?.deploy(),
+        deploySite(),
         storage?.uploadArtifacts(),
     ]);
     console.log("Deployment finalized.");
