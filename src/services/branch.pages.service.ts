@@ -1,4 +1,4 @@
-import {PagesInterface} from "../interfaces/pages.interface";
+import {PagesInterface} from "../interfaces/pages.interface.js";
 import {Octokit} from "@octokit/rest";
 import pLimit from "p-limit";
 import fs from "fs";

@@ -22,9 +22,9 @@ import {
     validateResultsPaths,
 } from "allure-deployer-shared";
 import {Storage as GCPStorage} from "@google-cloud/storage";
-import {NotifierService} from "./services/notifier.service";
+import {NotifierService} from "./services/notifier.service.js";
 import {GitHubNotifier} from "./features/messaging/github-notifier.js";
-import {GitHubConfig, BranchPagesService} from "./services/branch.pages.service";
+import {GitHubConfig, BranchPagesService} from "./services/branch.pages.service.js";
 import {GithubHost} from "./features/hosting/github.host.js";
 import github from "@actions/github";
 import core from "@actions/core";
@@ -32,7 +32,7 @@ import {setGoogleCredentialsEnv, validateSlackConfig} from "./utilities/util.js"
 import {GitHubArgInterface, Target} from "./interfaces/args.interface.js";
 import {ArtifactService} from "./services/artifact.service.js";
 import {GithubStorage} from "./features/github-storage.js";
-import {ArtifactPagesConfig, ArtifactPagesService} from "./services/artifact.pages.service";
+import {ArtifactPagesConfig, ArtifactPagesService} from "./services/artifact.pages.service.js";
 
 function getTarget(): Target {
     const target = core.getInput("target", {required: true}).toLowerCase();

@@ -2,9 +2,9 @@ import * as process from "node:process";
 import path from "node:path";
 import { Allure, ConsoleNotifier, copyFiles, FirebaseHost, FirebaseService, getReportStats, getRuntimeDirectory, GoogleStorage, GoogleStorageService, NotifyHandler, SlackNotifier, SlackService, validateResultsPaths, } from "allure-deployer-shared";
 import { Storage as GCPStorage } from "@google-cloud/storage";
-import { NotifierService } from "./services/notifier.service";
+import { NotifierService } from "./services/notifier.service.js";
 import { GitHubNotifier } from "./features/messaging/github-notifier.js";
-import { BranchPagesService } from "./services/branch.pages.service";
+import { BranchPagesService } from "./services/branch.pages.service.js";
 import { GithubHost } from "./features/hosting/github.host.js";
 import github from "@actions/github";
 import core from "@actions/core";
@@ -12,7 +12,7 @@ import { setGoogleCredentialsEnv, validateSlackConfig } from "./utilities/util.j
 import { Target } from "./interfaces/args.interface.js";
 import { ArtifactService } from "./services/artifact.service.js";
 import { GithubStorage } from "./features/github-storage.js";
-import { ArtifactPagesService } from "./services/artifact.pages.service";
+import { ArtifactPagesService } from "./services/artifact.pages.service.js";
 function getTarget() {
     const target = core.getInput("target", { required: true }).toLowerCase();
     if (!["firebase", "github"].includes(target)) {

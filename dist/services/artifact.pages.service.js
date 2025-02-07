@@ -1,6 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { DefaultArtifactClient } from "@actions/artifact";
-import { getAbsoluteFilePaths } from "../utilities/util";
+import { getAbsoluteFilePaths } from "../utilities/util.js";
 import github from "@actions/github";
 export class ArtifactPagesService {
     constructor({ owner, repo, token, idToken, reportDir }) {

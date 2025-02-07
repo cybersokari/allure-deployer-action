@@ -1,7 +1,7 @@
-import {PagesInterface} from "../interfaces/pages.interface";
+import {PagesInterface} from "../interfaces/pages.interface.js";
 import {Octokit} from "@octokit/rest";
 import {DefaultArtifactClient} from "@actions/artifact";
-import {getAbsoluteFilePaths} from "../utilities/util";
+import {getAbsoluteFilePaths} from "../utilities/util.js";
 import github from "@actions/github";
 
 export interface ArtifactPagesConfig {

@@ -1,6 +1,6 @@
 import {GithubInterface} from "../../interfaces/github.interface.js";
 import {NotificationData, Notifier} from "allure-deployer-shared";
-import {NotifierService} from "../../services/notifier.service";
+import {NotifierService} from "../../services/notifier.service.js";
 
 export type GitHubNotifierConfig = {
     client: GithubInterface, prNumber?: number, token?: string, prComment?: boolean
