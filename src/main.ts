@@ -28,7 +28,7 @@ import {GitHubConfig, BranchPagesService} from "./services/branch.pages.service.
 import {GithubHost} from "./features/hosting/github.host.js";
 import github from "@actions/github";
 import core from "@actions/core";
-import {setGoogleCredentialsEnv, validateSlackConfig} from "./utilities/util.js";
+import {getInputOrUndefined, setGoogleCredentialsEnv, validateSlackConfig} from "./utilities/util.js";
 import {GitHubArgInterface, Target} from "./interfaces/args.interface.js";
 import {ArtifactService} from "./services/artifact.service.js";
 import {GithubStorage} from "./features/github-storage.js";
@@ -48,10 +48,7 @@ function getRetries(): number {
     return parseInt(retries !== '' ? retries : "0", 10);
 }
 
-function getInputOrUndefined(name: string): string | undefined {
-    const input = core.getInput(name);
-    return input !== '' ? input : undefined;
-}
+
 
 export function main() {
     (async () => {

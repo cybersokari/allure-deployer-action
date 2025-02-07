@@ -8,7 +8,7 @@ import { BranchPagesService } from "./services/branch.pages.service.js";
 import { GithubHost } from "./features/hosting/github.host.js";
 import github from "@actions/github";
 import core from "@actions/core";
-import { setGoogleCredentialsEnv, validateSlackConfig } from "./utilities/util.js";
+import { getInputOrUndefined, setGoogleCredentialsEnv, validateSlackConfig } from "./utilities/util.js";
 import { Target } from "./interfaces/args.interface.js";
 import { ArtifactService } from "./services/artifact.service.js";
 import { GithubStorage } from "./features/github-storage.js";
@@ -24,10 +24,6 @@ function getTarget() {
 function getRetries() {
     const retries = core.getInput("retries");
     return parseInt(retries !== '' ? retries : "0", 10);
-}
-function getInputOrUndefined(name) {
-    const input = core.getInput(name);
-    return input !== '' ? input : undefined;
 }
 export function main() {
     (async () => {

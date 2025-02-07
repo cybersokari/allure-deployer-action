@@ -3,6 +3,7 @@ import * as fsSync from 'fs';
 import process from "node:process";
 import path from "node:path";
 import { GOOGLE_CREDENTIALS_PATH } from "./constants.js";
+import core from "@actions/core";
 export const ERROR_MESSAGES = {
     EMPTY_RESULTS: "Error: The specified results directory is empty.",
     NO_RESULTS_DIR: "Error: No Allure result files in the specified directory.",
@@ -110,4 +111,8 @@ export function getAbsoluteFilePaths(dir) {
         }
     }
     return filePaths;
+}
+export function getInputOrUndefined(name) {
+    const input = core.getInput(name);
+    return input !== '' ? input : undefined;
 }

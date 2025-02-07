@@ -4,6 +4,7 @@ import process from "node:process";
 import {SlackConfig} from "allure-deployer-shared";
 import path from "node:path";
 import {GOOGLE_CREDENTIALS_PATH} from "./constants.js";
+import core from "@actions/core";
 
 type ServiceAccountJson = {
     "type": string,
@@ -161,6 +162,11 @@ export function getAbsoluteFilePaths(dir: string): string[] {
     }
 
     return filePaths;
+}
+
+export function getInputOrUndefined(name: string): string | undefined {
+    const input = core.getInput(name);
+    return input !== '' ? input : undefined;
 }
 
 
