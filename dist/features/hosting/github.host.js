@@ -3,7 +3,7 @@ export class GithubHost {
         this.client = client;
     }
     async deploy() {
-        await this.client.deployPages();
+        return await this.client.deployPages();
     }
     async init() {
         return await this.client.setup();

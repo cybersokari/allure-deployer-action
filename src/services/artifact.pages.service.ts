@@ -43,6 +43,7 @@ export class ArtifactPagesService implements PagesInterface{
                 'X-GitHub-Api-Version': '2022-11-28'
             }
         })
+        console.log(`page response ${JSON.stringify(response.data)}`);
         return response.data.page_url
     }
 

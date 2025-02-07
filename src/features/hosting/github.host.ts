@@ -5,8 +5,8 @@ export class GithubHost implements HostingProvider{
     constructor(public readonly client: PagesInterface) {
 
     }
-    async deploy(): Promise<any> {
-        await this.client.deployPages();
+    async deploy(): Promise<string> {
+        return await this.client.deployPages();
     }
 
     async init(): Promise<string> {

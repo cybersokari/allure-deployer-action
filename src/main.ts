@@ -114,8 +114,8 @@ async function executeDeployment(args: GitHubArgInterface) {
         const [reportUrl] = await stageDeployment(args, storage);
         const allure = new Allure({args});
         await generateAllureReport({allure, reportUrl});
-        const [resultsStats] = await finalizeDeployment({args, storage});
-        await sendNotifications(args, resultsStats, reportUrl, allure.environments);
+        const [resultsStats, url] = await finalizeDeployment({args, storage});
+        await sendNotifications(args, resultsStats, reportUrl ?? url, allure.environments);
     } catch (error) {
         console.error("Deployment failed:", error);
         process.exit(1);
