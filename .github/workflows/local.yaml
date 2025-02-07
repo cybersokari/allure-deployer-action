@@ -41,6 +41,9 @@ on:
       subfolder:
         description: 'GitHub sub directory'
         default: 'local-action'
+      gh-pages-branch:
+        description: 'Branch to deploy Github pages'
+        default: 'gh-pages'
 jobs:
   firebase:
     if: ${{ github.event.inputs.job == 'firebase' }}
@@ -94,7 +97,7 @@ jobs:
         uses: ./
         with:
           target: 'github'
-          github_pages_branch: 'gh-pages'
+          github_pages_branch: ${{ github.event.inputs.gh-pages-branch }}
           allure_results_path: 'allure-results'
           report_name: ${{github.event.inputs.report-name}}
           language: ${{github.event.inputs.report-lang}}
