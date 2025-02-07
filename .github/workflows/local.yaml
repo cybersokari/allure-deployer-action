@@ -43,7 +43,6 @@ on:
         default: 'local-action'
       gh-pages-branch:
         description: 'Branch to deploy Github pages'
-        default: 'gh-pages'
 jobs:
   firebase:
     if: ${{ github.event.inputs.job == 'firebase' }}
