@@ -1,7 +1,7 @@
 import {PagesInterface} from "../interfaces/pages.interface.js";
 import {Octokit} from "@octokit/rest";
 import {DefaultArtifactClient} from "@actions/artifact";
-import {getAbsoluteFilePaths, getInputOrUndefined} from "../utilities/util.js";
+import {getAbsoluteFilePaths} from "../utilities/util.js";
 import github from "@actions/github";
 
 export interface ArtifactPagesConfig {
@@ -31,13 +31,12 @@ export class ArtifactPagesService implements PagesInterface{
 
     async deployPages(): Promise<string> {
         if(!this.artifactId) throw new Error('No artifact id found. Call setup() before deployPages()');
-        const environment = getInputOrUndefined('environment');
-        if(!environment)  throw new Error('No environment found. GitHub pages environment must be set');
+        // const environment = getInputOrUndefined('environment');
+        // if(!environment)  throw new Error('No environment found. GitHub pages environment must be set');
         const response = await this.octokit.request('POST /repos/{owner}/{repo}/pages/deployments', {
             owner: this.owner,
             repo: this.repo,
             artifact_id: this.artifactId,
-            environment,
             pages_build_version: github.context.sha,
             oidc_token: this.idToken,
             headers: {

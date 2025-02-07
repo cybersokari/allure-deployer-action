@@ -53,9 +53,6 @@ inputs:
     default: '${{ github.token }}'
   github_pages_branch:
     description: "Target branch for Deploying to GitHub Pages. Leave empty if you prefer to deploy via Artifacts"
-  environment:
-    description: "The target environment for GitHub Pages deployment."
-    default: 'github-pages'
   github_subfolder:
     description: "Sub directory to write the test reports files in Git"
     required: false
