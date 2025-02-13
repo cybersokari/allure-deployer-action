@@ -1,8 +1,0 @@
-{
-  "reportName": "Allure Report Deployer Example",
-  "name": "Allure Report Deployer",
-  "type": "github",
-  "reportUrl": "https://gatedaccessdev.web.app/",
-  "buildName": "example-site-12373941765",
-  "buildUrl": "https://github.com/cybersokari/allure-report-deployer/actions/runs/12373941765"
-}
